@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 public class UnityAnimationRecorder : MonoBehaviour {
 
+	// sample rate
+	public float samplesPerSecond = 45.0f;
+
 	// save file path
 	public string savePath;
 	public string fileName;
@@ -30,6 +33,7 @@ public class UnityAnimationRecorder : MonoBehaviour {
 
 	public bool recordBlendShape = false;
 
+	private float sampleTimer = 0.0f;
 
 	Transform[] recordObjs;
 	SkinnedMeshRenderer[] blendShapeObjs;
@@ -42,7 +46,6 @@ public class UnityAnimationRecorder : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		SetupRecorders ();
-
 	}
 
 	void SetupRecorders () {
@@ -85,8 +88,10 @@ public class UnityAnimationRecorder : MonoBehaviour {
 			StopRecording ();
 		}
 
-		if (isStart) {
-			nowTime += Time.deltaTime;
+		sampleTimer += Time.deltaTime;
+		if (isStart && sampleTimer >= 1.0f/samplesPerSecond) {
+			sampleTimer -= 1.0f/samplesPerSecond;
+			nowTime += 1.0f/samplesPerSecond;
 
 			for (int i = 0; i < objRecorders.Length; i++) {
 				objRecorders [i].AddFrame (nowTime);
